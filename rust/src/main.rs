@@ -1,12 +1,25 @@
-mod day1;
 use std::collections::HashMap;
+use once_cell::sync::Lazy;
+use paste::paste;
 
-use day1::*;
+macro_rules! days_decl {
+    ($daymap_name:ident : $($ds:literal),*) => {
+        $( paste!{ 
+            mod [< day $ds >]; 
+            use [< day $ds >]::*;
+        })*
+
+        static $daymap_name: Lazy<HashMap<usize, fn(String)>> = Lazy::new(|| {
+            let mut map: std::collections::HashMap<usize, fn(String)> = HashMap::new();
+            $( map.insert($ds, paste!{ [< day $ds >] });)*
+            map    
+        });
+    }
+}
+
+days_decl!(DAYS: 1);
 
 fn main() {
-    let mut day_map: HashMap<usize, fn(String)> = HashMap::new();
-    day_map.insert(1, day1);
-
     let day = std::env::args()
         .nth(1);
 
@@ -18,7 +31,7 @@ fn main() {
         Some(day) => {
             let input = std::fs::read_to_string(format!("../input/day{day}.txt")).unwrap();
 
-            match day_map.get(&day) {
+            match DAYS.get(&day) {
                 None => {
                     eprintln!("Day not finished!");
                 },
