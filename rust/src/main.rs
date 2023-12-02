@@ -1,45 +1,44 @@
-use std::collections::HashMap;
 use once_cell::sync::Lazy;
 use paste::paste;
+use std::collections::HashMap;
 
 macro_rules! days_decl {
     ($daymap_name:ident : $($ds:literal),*) => {
-        $( paste!{ 
-            mod [< day $ds >]; 
+        $( paste!{
+            mod [< day $ds >];
             use [< day $ds >]::*;
         })*
 
         static $daymap_name: Lazy<HashMap<usize, fn(String)>> = Lazy::new(|| {
             let mut map: std::collections::HashMap<usize, fn(String)> = HashMap::new();
             $( map.insert($ds, paste!{ [< day $ds >] });)*
-            map    
+            map
         });
     }
 }
 
-days_decl!(DAYS: 1);
+days_decl!(DAYS: 1, 2);
 
 fn main() {
-    let day = std::env::args()
-        .nth(1);
+    let day = std::env::args().nth(1);
 
-    match day.and_then(|d| d.parse::<usize>().ok()) {
+    let Some(day) = day.and_then(|d| d.parse::<usize>().ok()) else {
+        eprintln!("Usage: aoc23rs [day]");
+        return;
+    };
+
+    let Ok(input) = std::fs::read_to_string(format!("../input/day{day}.txt")) else {
+        eprintln!("input file not found! please create it at [REPO ROOT]/input/day{day}.txt");
+        return;
+    };
+
+    match DAYS.get(&day) {
         None => {
-            eprintln!("Usage: aoc23rs [day]");
+            eprintln!("Day not finished!");
         }
 
-        Some(day) => {
-            let input = std::fs::read_to_string(format!("../input/day{day}.txt")).unwrap();
-
-            match DAYS.get(&day) {
-                None => {
-                    eprintln!("Day not finished!");
-                },
-
-                Some(function) => {
-                    function(input);
-                }
-            }
+        Some(function) => {
+            function(input);
         }
     }
 }

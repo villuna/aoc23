@@ -1,10 +1,23 @@
 use std::cmp::Ordering;
 
 pub fn day1(input: String) {
-    let p1 = input.lines()
-        .map(|s| (s.chars().find(|c| c.is_ascii_digit()).unwrap().to_digit(10).unwrap(),
-                s.chars().rev().find(|c| c.is_ascii_digit()).unwrap().to_digit(10).unwrap())
-        )
+    let p1 = input
+        .lines()
+        .map(|s| {
+            (
+                s.chars()
+                    .find(|c| c.is_ascii_digit())
+                    .unwrap()
+                    .to_digit(10)
+                    .unwrap(),
+                s.chars()
+                    .rev()
+                    .find(|c| c.is_ascii_digit())
+                    .unwrap()
+                    .to_digit(10)
+                    .unwrap(),
+            )
+        })
         .map(|(a, b)| a * 10 + b)
         .sum::<u32>();
 
@@ -23,7 +36,8 @@ pub fn day1(input: String) {
     ];
 
     // Get the first digits
-    let p2a = input.lines()
+    let p2a = input
+        .lines()
         .map(|s| {
             // figure out which pattern comes first in the string, by sorting the patterns by their
             // position in the string
@@ -46,13 +60,21 @@ pub fn day1(input: String) {
             // Then replace the first pattern with its corresponding digit
             s.replace(&v[0].0, &v[0].1.to_string())
         })
-        .map(|s| s.chars().find(|c| c.is_ascii_digit()).unwrap().to_digit(10).unwrap());
+        .map(|s| {
+            s.chars()
+                .find(|c| c.is_ascii_digit())
+                .unwrap()
+                .to_digit(10)
+                .unwrap()
+        });
 
     // Get the last digits
-    let p2b = input.lines()
+    let p2b = input
+        .lines()
         .map(|s| s.chars().rev().collect::<String>())
         .map(|s| {
-            let mut v = vals.iter()
+            let mut v = vals
+                .iter()
                 .cloned()
                 .map(|(ss, v)| (ss.chars().rev().collect::<String>(), v))
                 .collect::<Vec<_>>();
@@ -73,10 +95,16 @@ pub fn day1(input: String) {
             });
             s.replace(&v[0].0, &v[0].1.to_string())
         })
-        .map(|s| s.chars().find(|c| c.is_ascii_digit()).unwrap().to_digit(10).unwrap());
+        .map(|s| {
+            s.chars()
+                .find(|c| c.is_ascii_digit())
+                .unwrap()
+                .to_digit(10)
+                .unwrap()
+        });
 
     // Zip them, convert to 2 digit number and get the sum
     let p2_sum = p2a.zip(p2b).map(|(a, b)| a * 10 + b).sum::<u32>();
 
-    println!("part 2: {p2_sum}"); 
+    println!("part 2: {p2_sum}");
 }
