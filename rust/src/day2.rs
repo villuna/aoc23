@@ -1,4 +1,4 @@
-use nom::{IResult, sequence::tuple, bytes::complete::{is_not, tag}, multi::{many0, separated_list0}, character::complete::digit1, branch::alt};
+use nom::{IResult, sequence::tuple, bytes::complete::{is_not, tag, is_a}, multi::{many0, separated_list0}, character::complete::digit1, branch::alt};
 
 const MAX_RED: usize = 12;
 const MAX_GREEN: usize = 13;
@@ -34,7 +34,7 @@ fn hand(input: &str) -> IResult<&str, Hand> {
 }
 
 fn parse_games(input: &str) -> IResult<&str, Vec<Vec<Hand>>> {
-    let (i, res) = separated_list0(tag("\n"), tuple((
+    let (i, res) = separated_list0(is_a("\r\n"), tuple((
         many0(is_not(":")),
         tag(": "),
         separated_list0(tag("; "), hand),
