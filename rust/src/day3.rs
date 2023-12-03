@@ -22,10 +22,10 @@ fn number_map(input: &str) -> NumberMap {
             let mut number_string = String::new();
             let mut map = Vec::new();
 
-            while let Some(num) = iter.peek() {
-                if num.1.is_ascii_digit() {
-                    number_string.push(num.1);
-                    map.push((i, num.0));
+            while let Some(&(j, c)) = iter.peek() {
+                if c.is_ascii_digit() {
+                    number_string.push(c);
+                    map.push((i, j));
                     iter.next();
                 } else {
                     break;
