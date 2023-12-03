@@ -17,7 +17,7 @@ macro_rules! days_decl {
     }
 }
 
-days_decl!(DAYS: 1, 2);
+days_decl!(DAYS: 1, 2, 3);
 
 fn main() {
     let day = std::env::args().nth(1);
