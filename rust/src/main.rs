@@ -1,6 +1,7 @@
 use once_cell::sync::Lazy;
 use paste::paste;
 use std::collections::HashMap;
+mod parsers;
 
 macro_rules! days_decl {
     ($daymap_name:ident : $($ds:literal),*) => {
@@ -17,7 +18,7 @@ macro_rules! days_decl {
     }
 }
 
-days_decl!(DAYS: 1, 2, 3, 4, 5);
+days_decl!(DAYS: 1, 2, 3, 4, 5, 6);
 
 fn main() {
     let day = std::env::args().nth(1);
