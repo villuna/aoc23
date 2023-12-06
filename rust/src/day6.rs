@@ -1,11 +1,11 @@
-use nom::{sequence::{separated_pair, preceded}, bytes::complete::tag};
-use crate::parsers::{int, newline, space_separated_ints, strip};
+use nom::{sequence::{separated_pair, preceded}, bytes::complete::{tag, is_not}, Parser};
+use crate::parsers::{int, newline, kait_ints};
 
 pub fn day6(mut input: String) {
     let (times, distances) = separated_pair(
-        preceded(strip(tag("Time:")), space_separated_ints::<i64>),
+        is_not("\r\n").map(kait_ints),
         newline,
-        preceded(strip(tag("Distance:")), space_separated_ints::<i64>),
+        is_not("\r\n").map(kait_ints),
     )(&input).unwrap().1;
 
     let p1 = times.iter()

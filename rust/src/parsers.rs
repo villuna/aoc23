@@ -34,7 +34,7 @@ where
 }
 
 pub fn kait_ints<T: FromStr>(input: &str) -> Vec<T> {
-    input.split(|c: char| !c.is_ascii_digit())
+    input.split(|c: char| !c.is_ascii_digit() && c != '-')
         .filter_map(|s| s.parse::<T>().ok())
         .collect()
 }
