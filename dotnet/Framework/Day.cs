@@ -1,5 +1,5 @@
 ﻿namespace Framework;
 
-public interface Day {
-    void run(string input);
+public interface IDay {
+    void Run(string input);
 }
