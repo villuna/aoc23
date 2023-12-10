@@ -3,13 +3,11 @@ const utils = @import("utils.zig");
 
 const File = std.fs.File;
 const ArrayList = std.ArrayList;
-const LinearFifo = std.fifo.LinearFifo;
-const AutoHashMap = std.AutoHashMap;
 const expect = std.testing.expect;
 const openDayFile = utils.openDayFile;
 
 fn HashSet(comptime K: type) type {
-    return AutoHashMap(K, void);
+    return std.AutoHashMap(K, void);
 }
 
 const Vec2 = struct {
