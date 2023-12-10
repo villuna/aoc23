@@ -4,7 +4,9 @@ const expect = std.testing.expect;
 const print = std.debug.print;
 
 const utils = @import("utils.zig");
-const open_day_file = utils.open_day_file;
+const find = utils.find;
+const findLast = utils.findLast;
+const openDayFile = utils.openDayFile;
 
 // Set up the allocator
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
@@ -14,59 +16,7 @@ var alloc = gpa.allocator();
 // what the fuck is going on
 const replacements = [_]struct { before: []const u8, after: []const u8 }{ .{ .before = "one", .after = "1" }, .{ .before = "two", .after = "2" }, .{ .before = "three", .after = "3" }, .{ .before = "four", .after = "4" }, .{ .before = "five", .after = "5" }, .{ .before = "six", .after = "6" }, .{ .before = "seven", .after = "7" }, .{ .before = "eight", .after = "8" }, .{ .before = "nine", .after = "9" } };
 
-fn find(haystack: []const u8, needle: []const u8) ?usize {
-    if (needle.len > haystack.len)
-        return null;
-
-    var i: usize = 0;
-    while (i < haystack.len - needle.len + 1) : (i += 1) {
-        const found = haystack[i .. i + needle.len];
-
-        var all = true;
-        for (found, 0..) |char, j| {
-            if (char != needle[j]) {
-                all = false;
-                break;
-            }
-        }
-
-        if (all)
-            return i;
-    }
-
-    return null;
-}
-
-fn find_last(haystack: []const u8, needle: []const u8) ?usize {
-    if (needle.len > haystack.len)
-        return null;
-
-    var i: usize = haystack.len - needle.len;
-    while (true) {
-        const found = haystack[i .. i + needle.len];
-
-        var all = true;
-        for (found, 0..) |char, j| {
-            if (char != needle[j]) {
-                all = false;
-                break;
-            }
-        }
-
-        if (all)
-            return i;
-
-        if (i > 0) {
-            i -= 1;
-        } else {
-            break;
-        }
-    }
-
-    return null;
-}
-
-fn part1_line_val(line: []const u8) i32 {
+fn part1LineVal(line: []const u8) i32 {
     var first_num: i32 = -1;
     var last_num: i32 = -1;
 
@@ -82,7 +32,7 @@ fn part1_line_val(line: []const u8) i32 {
     return first_num * 10 + last_num;
 }
 
-fn part2_line_val(line: []const u8) !i32 {
+fn part2LineVal(line: []const u8) !i32 {
     var first_newline = ArrayList(u8).init(alloc);
     defer first_newline.deinit();
 
@@ -113,7 +63,7 @@ fn part2_line_val(line: []const u8) !i32 {
     var last_rep: ?usize = null;
     var last_pos: ?usize = null;
     for (replacements, 0..) |rep, i| {
-        const mpos = find_last(line, rep.before);
+        const mpos = findLast(line, rep.before);
 
         if (mpos) |pos| {
             if (last_rep == null or last_pos.? < pos) {
@@ -153,7 +103,7 @@ fn part2_line_val(line: []const u8) !i32 {
 }
 
 pub fn day1() !void {
-    const f = try open_day_file(1);
+    const f = try openDayFile(1, alloc);
     var reader = f.reader();
     var p1: i32 = 0;
     var p2: i32 = 0;
@@ -162,14 +112,14 @@ pub fn day1() !void {
         var line = ArrayList(u8).init(alloc);
         defer line.deinit();
 
-        var writer = line.writer();
+        const writer = line.writer();
         reader.streamUntilDelimiter(writer, '\n', null) catch |err| {
             try expect(err == error.EndOfStream);
             break;
         };
 
-        p1 += part1_line_val(line.items);
-        p2 += try part2_line_val(line.items);
+        p1 += part1LineVal(line.items);
+        p2 += try part2LineVal(line.items);
     }
 
     print("part 1: {d}\npart 2: {d}\n", .{ p1, p2 });
