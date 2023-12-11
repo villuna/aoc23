@@ -30,7 +30,7 @@ fn parse_input(input: &str, expansion: u128) -> Vec<(u128, u128)> {
     res
 }
 
-fn solve(input: &str, expansion: u128) {
+fn solve(input: &str, expansion: u128) -> u128 {
     let galaxies = parse_input(&input, expansion);
     let mut total = 0;
 
@@ -42,10 +42,10 @@ fn solve(input: &str, expansion: u128) {
         }
     }
 
-    println!("part 1: {}", total / 2);
+    total / 2
 }
 
 pub fn day11(input: String) {
-    solve(&input, 2);
-    solve(&input, 1000000);
+    println!("part 1: {}", solve(&input, 2));
+    println!("part 2: {}", solve(&input, 1000000));
 }
