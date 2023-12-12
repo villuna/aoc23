@@ -15,10 +15,10 @@ struct Burst {
     length: i8,
 }
 
-fn possible_solutions<'a, 'b>(
+fn possible_solutions<'a>(
     line: &'a str,
-    springs: &'b [i8],
-    cache: &mut HashMap<(&'a str, &'b [i8]), usize>,
+    springs: &'a [i8],
+    cache: &mut HashMap<(&'a str, &'a [i8]), usize>,
 ) -> usize {
     if let Some(answer) = cache.get(&(line, springs)) {
         return *answer;
