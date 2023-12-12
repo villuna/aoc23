@@ -2,7 +2,6 @@ const std = @import("std");
 const ArrayList = std.ArrayList;
 const expect = std.testing.expect;
 const print = std.debug.print;
-
 const utils = @import("utils.zig");
 const find = utils.find;
 const findLast = utils.findLast;

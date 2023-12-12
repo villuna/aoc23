@@ -235,7 +235,7 @@ fn part1(env: Environment, left: *ArrayList(Vec2), right: *ArrayList(Vec2), loop
         j += 1;
     }
 
-    std.debug.print("p1: {d}\n", .{distance / 2});
+    std.debug.print("part 1: {d}\n", .{distance / 2});
 }
 
 // Depth first search
