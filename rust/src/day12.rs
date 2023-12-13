@@ -7,7 +7,7 @@ use nom::{
 use rayon::prelude::*;
 use std::{collections::HashMap, time::Instant};
 
-use crate::parsers::int;
+use crate::{parsers::int, AOContext};
 
 #[derive(Eq, PartialEq, Debug)]
 struct Burst {
@@ -90,32 +90,22 @@ fn unfold(lines: &[(String, Vec<i8>)]) -> Vec<(String, Vec<i8>)> {
         .collect()
 }
 
-pub fn day12(input: String) {
+pub fn day12(input: String, ctx: &mut AOContext) {
     let mut line = separated_pair(
         is_not(" ").map(|s: &str| s.to_string()),
         tag(" "),
         separated_list1(tag(","), int::<i8>),
     );
 
-    let now = Instant::now();
-
     let lines = input
         .lines()
         .map(|l| line(l).unwrap().1)
         .collect::<Vec<_>>();
-
-    let parsing = now.elapsed().as_secs_f64() * 1000.0;
-    let now = Instant::now();
-
-    println!("part 1: {}", solve(&lines));
     
-    let p1 = now.elapsed().as_secs_f64() * 1000.0;
-    let now = Instant::now();
+    ctx.parsing_done();
 
+    ctx.submit_part1(solve(&lines));
+    
     let unfolded = unfold(&lines);
-    println!("part 2: {}", solve(&unfolded));
-
-    let p2 = now.elapsed().as_secs_f64() * 1000.0;
-
-    println!("parsing took {parsing:.2}ms\npart 1 took {p1:.2}ms\npart 2 took {p2:.2}ms");
+    ctx.submit_part2(solve(&unfolded));
 }

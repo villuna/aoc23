@@ -1,5 +1,7 @@
 use nom::{IResult, sequence::tuple, bytes::complete::{is_not, tag, is_a}, multi::{many0, separated_list0}, character::complete::digit1, branch::alt};
 
+use crate::AOContext;
+
 const MAX_RED: usize = 12;
 const MAX_GREEN: usize = 13;
 const MAX_BLUE: usize = 14;
@@ -45,8 +47,9 @@ fn parse_games(input: &str) -> IResult<&str, Vec<Vec<Hand>>> {
     Ok((i, res))
 }
 
-pub fn day2(input: String) {
+pub fn day2(input: String, ctx: &mut AOContext) {
     let input = parse_games(&input).unwrap().1;
+    ctx.parsing_done();
 
     let p1 = input.iter()
         .enumerate()
@@ -54,7 +57,7 @@ pub fn day2(input: String) {
         .map(|(i, _)| i + 1)
         .sum::<usize>();
 
-    println!("part 1: {p1}");
+    ctx.submit_part1(p1);
 
     let p2 = input.iter()
         .map(|hands| (
@@ -65,5 +68,5 @@ pub fn day2(input: String) {
         .map(|(r, g, b)| r * g * b)
         .sum::<usize>();
 
-    println!("part 2: {p2}");
+    ctx.submit_part2(p2);
 }

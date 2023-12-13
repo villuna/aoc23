@@ -1,3 +1,5 @@
+use crate::AOContext;
+
 fn line(input: &str) -> (Vec<u32>, Vec<u32>) {
     let x = input.split(":").nth(1).unwrap();
     let mut sides = x.split("|");
@@ -14,17 +16,18 @@ fn winning_numbers_count((winning, have): &(Vec<u32>, Vec<u32>)) -> usize {
     have.iter().filter(|n| winning.contains(n)).count()
 }
 
-pub fn day4(input: String) {
+pub fn day4(input: String, ctx: &mut AOContext) {
     let cards = input.lines()
         .map(line)
         .collect::<Vec<_>>();
+    ctx.parsing_done();
 
     let p1 = cards.iter().map(winning_numbers_count)
         .filter(|n| *n > 0)
         .map(|n| 2u32.pow((n - 1) as u32))
         .sum::<u32>();
 
-    println!("part 1: {p1}");
+    ctx.submit_part1(p1);
 
     let mut card_count = vec![1; cards.len()];
 
@@ -43,5 +46,5 @@ pub fn day4(input: String) {
 
     let p2 = card_count.iter().sum::<usize>();
 
-    println!("part 2: {p2}");
+    ctx.submit_part2(p2);
 }

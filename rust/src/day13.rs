@@ -1,6 +1,8 @@
 use std::cmp::min;
 use std::collections::HashSet;
 
+use crate::AOContext;
+
 type Coord = (usize, usize);
 
 #[derive(Debug)]
@@ -94,7 +96,7 @@ fn solve(input: &[Pattern], smudges: usize) -> usize {
         .sum::<usize>()
 }
 
-pub fn day13(input: String) {
+pub fn day13(input: String, ctx: &mut AOContext) {
     let input = input
         .split("\n\n")
         .map(|s| {
@@ -110,6 +112,8 @@ pub fn day13(input: String) {
         })
         .collect::<Vec<_>>();
 
-    println!("part 1: {}", solve(&input, 0));
-    println!("part 2: {}", solve(&input, 1));
+    ctx.parsing_done();
+
+    ctx.submit_part1(solve(&input, 0));
+    ctx.submit_part2(solve(&input, 1));
 }

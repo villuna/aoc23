@@ -1,12 +1,13 @@
 use nom::{sequence::{separated_pair, preceded}, bytes::complete::{tag, is_not}, Parser};
-use crate::parsers::{int, newline, kait_ints};
+use crate::{parsers::{int, newline, kait_ints}, AOContext};
 
-pub fn day6(mut input: String) {
+pub fn day6(mut input: String, ctx: &mut AOContext) {
     let (times, distances) = separated_pair(
         is_not("\r\n").map(kait_ints),
         newline,
         is_not("\r\n").map(kait_ints),
     )(&input).unwrap().1;
+    ctx.parsing_done();
 
     let p1 = times.iter()
         .zip(distances.iter())
@@ -16,7 +17,7 @@ pub fn day6(mut input: String) {
                 .count()
         }).product::<usize>();
 
-    println!("part 1: {p1}");
+    ctx.submit_part1(p1);
 
     // Get rid of all the spaces for the second part
     input.retain(|c| c != ' ');
@@ -31,5 +32,5 @@ pub fn day6(mut input: String) {
         .filter(|d| *d > distance)
         .count();
 
-    println!("part 2: {p2}");
+    ctx.submit_part2(p2);
 }

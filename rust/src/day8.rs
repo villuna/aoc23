@@ -7,7 +7,7 @@ use nom::{
     IResult, Parser,
 };
 
-use crate::parsers::newline;
+use crate::{parsers::newline, AOContext};
 
 #[derive(Debug)]
 struct Environment<'a> {
@@ -48,26 +48,19 @@ fn parse(input: &str) -> IResult<&str, Environment> {
         .parse(input)
 }
 
-pub fn day8(input: String) {
-    let mut now = Instant::now();
+pub fn day8(input: String, ctx: &mut AOContext) {
     let env = parse(&input).unwrap().1;
-    let parsing = now.elapsed().as_secs_f64() * 1000.0;
-    println!("parsing took {parsing:.2}ms");
+    ctx.parsing_done();
 
-    now = Instant::now();
     let p1 = general_solution(&env, |&node| node == "AAA", |&node| node == "ZZZ");
-    let part1 = now.elapsed().as_secs_f64() * 1000.0;
+    ctx.submit_part1(p1);
 
-    println!("part 1: {p1} (took {part1:.2}ms)");
-
-    now = Instant::now();
     let p2 = general_solution(
         &env,
         |node| node.chars().last() == Some('A'),
         |node| node.chars().last() == Some('Z'),
     );
-    let part2 = now.elapsed().as_secs_f64() * 1000.0;
-    println!("part 2: {p2} (took {part2:.2}ms)");
+    ctx.submit_part2(p2);
 }
 
 fn general_solution(

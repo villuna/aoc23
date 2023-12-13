@@ -1,3 +1,5 @@
+use crate::AOContext;
+
 fn parse_input(input: &str, expansion: u128) -> Vec<(u128, u128)> {
     let mut empty_cols = (0..input.lines().next().unwrap().len()).collect::<Vec<_>>();
 
@@ -45,7 +47,7 @@ fn solve(input: &str, expansion: u128) -> u128 {
     total / 2
 }
 
-pub fn day11(input: String) {
-    println!("part 1: {}", solve(&input, 2));
-    println!("part 2: {}", solve(&input, 1000000));
+pub fn day11(input: String, ctx: &mut AOContext) {
+    ctx.submit_part1(solve(&input, 2));
+    ctx.submit_part2(solve(&input, 1000000));
 }

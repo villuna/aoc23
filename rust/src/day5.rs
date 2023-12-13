@@ -7,6 +7,8 @@ use nom::{
 };
 use smallvec::{SmallVec, smallvec};
 
+use crate::AOContext;
+
 #[derive(Debug)]
 struct Range {
     source_base: i64,
@@ -64,13 +66,14 @@ fn almanac(input: &str) -> IResult<&str, Almanac> {
         .parse(input)
 }
 
-pub fn day5(input: String) {
+pub fn day5(input: String, ctx: &mut AOContext) {
     let almanac = almanac(&input).unwrap().1;
-    part1(&almanac);
-    part2(&almanac);
+    ctx.parsing_done();
+    ctx.submit_part1(part1(&almanac));
+    ctx.submit_part2(part2(&almanac));
 }
 
-fn part1(almanac: &Almanac) {
+fn part1(almanac: &Almanac) -> i64 {
     let mut seeds = almanac.seeds.clone();
 
     for ranges in almanac.ranges.iter() {
@@ -93,8 +96,7 @@ fn part1(almanac: &Almanac) {
         }
     }
 
-    let p1 = seeds.iter().min().unwrap();
-    println!("part 1: {p1}");
+    *seeds.iter().min().unwrap()
 }
 
 // Takes an interval and a range and splits it up into a list of unmapped intervals and a list of
@@ -140,7 +142,7 @@ fn intersect_intervals((start, end): (i64, i64), range: &Range) -> (SmallVec<[(i
     }
 }
 
-fn part2(almanac: &Almanac) {
+fn part2(almanac: &Almanac) -> i64 {
     let mut seeds = almanac
         .seeds
         .chunks_exact(2)
@@ -173,7 +175,5 @@ fn part2(almanac: &Almanac) {
         seeds = next_seeds;
     }
 
-    let p2 = seeds.iter().map(|(a, _)| a).min().unwrap();
-
-    println!("part 2: {p2}");
+    *seeds.iter().map(|(a, _)| a).min().unwrap()
 }

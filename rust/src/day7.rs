@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::AOContext;
+
 #[derive(PartialEq, Eq, Ord, PartialOrd, Debug, Clone, Copy)]
 enum Ranking {
     High,
@@ -113,13 +115,14 @@ fn solve_part(input: &[(&str, i64)], part: Part) -> i64 {
         .sum::<i64>()
 }
 
-pub fn day7(input: String) {
+pub fn day7(input: String, ctx: &mut AOContext) {
     let input = input.lines()
         .map(|line| {
             let mut splits = line.split(" ");
             (splits.next().unwrap(), splits.next().unwrap().parse::<i64>().unwrap())
         }).collect::<Vec<_>>();
+    ctx.parsing_done();
 
-    println!("part 1: {}", solve_part(&input, Part::Part1));
-    println!("part 2: {}", solve_part(&input, Part::Part2));
+    ctx.submit_part1(solve_part(&input, Part::Part1));
+    ctx.submit_part2(solve_part(&input, Part::Part2));
 }

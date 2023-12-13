@@ -1,6 +1,8 @@
 use std::cmp::Ordering;
 
-pub fn day1(input: String) {
+use crate::AOContext;
+
+pub fn day1(input: String, ctx: &mut AOContext) {
     let p1 = input
         .lines()
         .map(|s| {
@@ -21,7 +23,7 @@ pub fn day1(input: String) {
         .map(|(a, b)| a * 10 + b)
         .sum::<u32>();
 
-    println!("part 1: {p1:?}");
+    ctx.submit_part1(p1);
 
     let vals = [
         ("one", 1),
@@ -106,5 +108,5 @@ pub fn day1(input: String) {
     // Zip them, convert to 2 digit number and get the sum
     let p2_sum = p2a.zip(p2b).map(|(a, b)| a * 10 + b).sum::<u32>();
 
-    println!("part 2: {p2_sum}");
+    ctx.submit_part2(p2_sum);
 }

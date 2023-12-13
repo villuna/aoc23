@@ -1,3 +1,5 @@
+use crate::AOContext;
+
 type NumberMap = Vec<(u32, Vec<(usize, usize)>)>;
 
 fn number_map(input: &str) -> NumberMap {
@@ -55,9 +57,11 @@ fn are_adjacent(&(ai, aj): &(usize, usize), &(bi, bj): &(usize, usize)) -> bool 
     ai.abs_diff(bi) == 1 && aj.abs_diff(bj) == 1
 }
 
-pub fn day3(input: String) {
+pub fn day3(input: String, ctx: &mut AOContext) {
     let numbers = number_map(&input);
     let char_positions = char_pos_map(&input);
+    
+    ctx.parsing_done();
 
     let p1 = numbers.iter()
         .filter(|(_, coords)| {
@@ -67,7 +71,7 @@ pub fn day3(input: String) {
         }).map(|(num, _)| num)
         .sum::<u32>();
 
-    println!("part 1: {p1}");
+    ctx.submit_part1(p1);
 
     let p2 = char_positions.iter()
         .filter(|(c, _)| *c == '*')
@@ -84,5 +88,5 @@ pub fn day3(input: String) {
             }
         }).sum::<u32>();
 
-    println!("part 2: {p2}");
+    ctx.submit_part2(p2);
 }

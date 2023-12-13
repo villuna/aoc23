@@ -1,9 +1,11 @@
-use crate::parsers::kait_ints;
+use crate::{parsers::kait_ints, AOContext};
 
-pub fn day9(input: String) {
+pub fn day9(input: String, ctx: &mut AOContext) {
     let nums: Vec<Vec<i64>> = input.lines()
         .map(kait_ints)
         .collect::<Vec<_>>();
+
+    ctx.parsing_done();
 
     let (p1, p2) = nums.iter().map(|vec| {
         let mut difference_stack = vec![vec.clone()];
@@ -31,5 +33,5 @@ pub fn day9(input: String) {
         (p1, p2)
     }).reduce(|(a, b), (c, d)| (a + c, b + d)).unwrap();
 
-    println!("part 1: {}\npart2: {}", p1, p2);
+    ctx.submit_both(p1, p2);
 }
