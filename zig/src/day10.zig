@@ -6,11 +6,7 @@ const ArrayList = std.ArrayList;
 const expect = std.testing.expect;
 const openDayFile = utils.openDayFile;
 
-fn HashSet(comptime K: type) type {
-    return std.AutoHashMap(K, void);
-}
-
-const Vec2 = struct {
+pub const Vec2 = struct {
     x: isize,
     y: isize,
 
@@ -19,8 +15,12 @@ const Vec2 = struct {
     }
 };
 
-fn vec2(x: isize, y: isize) Vec2 {
+pub fn vec2(x: isize, y: isize) Vec2 {
     return Vec2{ .x = x, .y = y };
+}
+
+fn HashSet(comptime K: type) type {
+    return std.AutoHashMap(K, void);
 }
 
 const Dir = enum(u8) { right = 1 << 0, down = 1 << 1, left = 1 << 2, up = 1 << 3 };
@@ -279,12 +279,12 @@ pub fn day10() !void {
     // I'm using an arena allocator! because this makes memory management a lot easier
     // when you have a lot of little allocations that have to live a long time
     // for example, the list of strings that make up the map
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    var arena = std.heap.ArenaAllocator.init(gpa.allocator());
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     const alloc = arena.allocator();
     defer arena.deinit();
 
     const file = try openDayFile(10, alloc);
+    defer file.close();
     const env = try parseInput(file.reader(), alloc);
 
     // to keep track of where the loop is, and which tiles are on the lhs and rhs of the loop
