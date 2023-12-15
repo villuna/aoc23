@@ -5,7 +5,7 @@ use nom::{
     Parser,
 };
 use rayon::prelude::*;
-use std::{collections::HashMap, time::Instant};
+use std::collections::HashMap;
 
 use crate::{parsers::int, AOContext};
 
