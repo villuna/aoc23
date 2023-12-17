@@ -1,17 +1,41 @@
-use std::{cmp::Reverse, collections::HashSet};
+use crate::utils::{add_coords, Dir};
 use itertools::Itertools;
 use priority_queue::PriorityQueue;
-use crate::utils::{Dir, add_coords};
+use std::{cmp::Reverse, collections::HashSet, hash::Hash};
 
 use crate::AOContext;
 
-#[derive(Debug, Ord, Eq, PartialEq, PartialOrd, Hash, Clone, Copy)]
+#[derive(Debug, Eq, Clone, Copy)]
 struct Entry {
     pos: (isize, isize),
     dir: Option<Dir>,
 }
 
-fn next<const MIN: isize, const MAX: isize>(entry: &Entry, map: &[&[u8]], cost: usize) -> Vec<(usize, Entry)> {
+fn dir_axis(dir: Dir) -> u8 {
+    match dir {
+        Dir::Up | Dir::Down => 0,
+        Dir::Left | Dir::Right => 1,
+    }
+}
+
+impl Hash for Entry {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.pos.hash(state);
+        self.dir.map(dir_axis).hash(state);
+    }
+}
+
+impl PartialEq for Entry {
+    fn eq(&self, other: &Self) -> bool {
+        self.pos == other.pos && self.dir.map(dir_axis) == other.dir.map(dir_axis)
+    }
+}
+
+fn next<const MIN: isize, const MAX: isize>(
+    entry: &Entry,
+    map: &[&[u8]],
+    cost: usize,
+) -> Vec<(usize, Entry)> {
     let dim = (map[0].len() as isize, map.len() as isize);
 
     let directions: &[Dir] = match entry.dir {
@@ -84,6 +108,6 @@ fn solve(map: &[&[u8]], edge_fn: impl Fn(&Entry, &[&[u8]], usize) -> Vec<(usize,
 pub fn day17(input: String, ctx: &mut AOContext) {
     let map = input.lines().map(|l| l.as_bytes()).collect_vec();
 
-    ctx.submit_part1(solve(&map, next::<0,3>));
-    ctx.submit_part2(solve(&map, next::<3,10>));
+    ctx.submit_part1(solve(&map, next::<0, 3>));
+    ctx.submit_part2(solve(&map, next::<3, 10>));
 }
