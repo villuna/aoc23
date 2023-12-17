@@ -2,34 +2,12 @@ use std::collections::HashSet;
 use itertools::Itertools;
 use rayon::prelude::*;
 
+use crate::utils::{Dir, add_coords};
 use crate::AOContext;
-
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-enum Dir {
-    Up,
-    Down,
-    Left,
-    Right,
-}
-
-impl Dir {
-    fn increment(&self) -> (isize, isize) {
-        match self {
-            Dir::Up => (0, -1),
-            Dir::Down => (0, 1),
-            Dir::Left => (-1, 0),
-            Dir::Right => (1, 0),
-        }
-    }
-}
 
 struct Beam {
     dir: Dir,
     pos: (isize, isize),
-}
-
-fn add_coords(c1: (isize, isize), c2: (isize, isize)) -> (isize, isize) {
-    (c1.0 + c2.0, c1.1 + c2.1)
 }
 
 impl Beam {

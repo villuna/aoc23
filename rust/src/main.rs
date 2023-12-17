@@ -3,6 +3,7 @@ use paste::paste;
 use std::{collections::HashMap, time::Instant, fmt::Display};
 use clap::Parser;
 mod parsers;
+mod utils;
 
 macro_rules! days_decl {
     ($daymap_name:ident : $($ds:literal),*) => {
@@ -19,7 +20,7 @@ macro_rules! days_decl {
     }
 }
 
-days_decl!(DAYS: 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 16);
+days_decl!(DAYS: 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 16, 17);
 
 #[derive(Parser)]
 struct Args {
