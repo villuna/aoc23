@@ -203,12 +203,6 @@ pub fn day15() !void {
     defer input.deinit();
     try file.reader().streamUntilDelimiter(input.writer(), '\n', null);
 
-    var timer = try std.time.Timer.start();
     try part1(input.items);
-    const p1: f64 = @floatFromInt(timer.lap());
     try part2(input.items, alloc);
-    const p2: f64 = @floatFromInt(timer.lap());
-
-    print("part 1 took {d}us\n", .{p1 / 1000.0});
-    print("part 2 took {d}us\n", .{p2 / 1000.0});
 }
