@@ -2,6 +2,7 @@ const std = @import("std");
 const print = std.debug.print;
 const utils = @import("utils.zig");
 const expect = std.testing.expect;
+const Split = utils.Split;
 
 fn hash(str: []const u8) u8 {
     var res: u8 = 0;
@@ -16,42 +17,6 @@ test "hash" {
     try expect(hash("rn=1") == 30);
     try expect(hash("cm-") == 253);
 }
-
-const Split = struct {
-    buffer: []const u8,
-    pos: usize,
-    delimiter: u8,
-
-    fn new(buffer: []const u8, delimiter: u8) Split {
-        return Split{
-            .buffer = buffer,
-            .pos = 0,
-            .delimiter = delimiter,
-        };
-    }
-
-    fn next(self: *Split) ?[]const u8 {
-        var next_pos = self.pos;
-
-        while (next_pos < self.buffer.len) {
-            if (self.buffer[next_pos] == self.delimiter) {
-                const res = self.buffer[self.pos..next_pos];
-                self.pos = next_pos + 1;
-                return res;
-            }
-
-            next_pos += 1;
-        }
-
-        if (next_pos == self.pos) {
-            return null;
-        } else {
-            const res = self.buffer[self.pos..];
-            self.pos = self.buffer.len;
-            return res;
-        }
-    }
-};
 
 fn part1(input: []const u8) !void {
     var splits = Split.new(input, ',');
