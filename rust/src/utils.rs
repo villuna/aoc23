@@ -10,7 +10,7 @@ pub fn add_coords(c1: (isize, isize), c2: (isize, isize)) -> (isize, isize) {
     (c1.0 + c2.0, c1.1 + c2.1)
 }
 
-#[derive(Copy, Clone, Debug, Hash)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Coord(pub isize, pub isize);
 
 impl std::ops::Add for Coord {
