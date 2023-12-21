@@ -1,40 +1,25 @@
-use std::collections::{HashSet, VecDeque, HashMap};
+use std::collections::{VecDeque, HashMap};
 
 use crate::{AOContext, utils::{Coord, Dir}};
 
 #[derive(Debug)]
-struct Env {
-    rocks: HashSet<Coord>,
+struct Env<'a> {
+    map: &'a [u8],
     start: Coord,
     dim: (isize, isize),
 }
 
-fn parse_input(input: &str) -> Env {
-    let mut rocks = HashSet::new();
-    let mut start = Coord(0, 0);
-    let mut dim = (0, 0);
-
-    for (y, line) in input.as_bytes().split(|b| *b == b'\n').enumerate() {
-        if line.len() == 0 {
-            continue;
-        }
-        dim.1 = y;
-        for (x, c) in line.iter().enumerate() {
-            dim.0 = x;
-            match *c {
-                b'#' => { rocks.insert(Coord(x as _, y as _)); },
-                b'S' => { start = Coord(x as _, y as _); },
-                _ => {},
-            }
-        }
+impl Env<'_> {
+    fn is_rock(&self, &Coord(x, y): &Coord) -> bool {
+        self.map[y as usize * 132 + x as usize] == b'#'
     }
+}
 
-    let dim = (dim.0 as isize + 1, dim.1 as isize + 1);
-
+fn parse_input(input: &str) -> Env {
     Env {
-        rocks,
-        start,
-        dim
+        map: input.as_bytes(),
+        start: Coord(65, 65),
+        dim: (131, 131),
     }
 }
 
@@ -55,7 +40,7 @@ fn solve(env: &Env, ctx: &mut AOContext) {
             let next = coord + Coord(inc.0, inc.1);
 
             if next.0 >= 0 && next.0 < env.dim.0 && next.1 >= 0 && next.1 < env.dim.1 {
-                if !visited.contains_key(&next) && !env.rocks.contains(&next) {
+                if !visited.contains_key(&next) && !env.is_rock(&next) {
                     frontier.push_back((dist + 1, next));
                 }
             }
