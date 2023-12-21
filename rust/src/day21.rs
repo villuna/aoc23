@@ -1,6 +1,9 @@
-use std::collections::{VecDeque, HashMap};
+use std::collections::{HashMap, VecDeque};
 
-use crate::{AOContext, utils::{Coord, Dir}};
+use crate::{
+    utils::{Coord, Dir},
+    AOContext,
+};
 
 #[derive(Debug)]
 struct Env<'a> {
@@ -32,7 +35,7 @@ fn solve(env: &Env, ctx: &mut AOContext) {
         if visited.contains_key(&coord) {
             continue;
         }
-        
+
         visited.insert(coord, dist);
 
         for d in [Dir::Up, Dir::Down, Dir::Left, Dir::Right] {
@@ -47,20 +50,33 @@ fn solve(env: &Env, ctx: &mut AOContext) {
         }
     }
 
-    let p1 = visited.values().filter(|v| **v <= 64 && **v % 2 == 0).count();
+    let p1 = visited
+        .values()
+        .filter(|v| **v <= 64 && **v % 2 == 0)
+        .count();
+
     ctx.submit_part1(p1);
-    let even_corners = visited.values().filter(|v| **v % 2 == 0 && **v > 65).count();
-    let odd_corners = visited.values().filter(|v| **v % 2 == 1 && **v > 65).count();
+
+    let even_corners = visited
+        .values()
+        .filter(|v| **v % 2 == 0 && **v > 65)
+        .count();
+    let odd_corners = visited
+        .values()
+        .filter(|v| **v % 2 == 1 && **v > 65)
+        .count();
 
     // This is 202300 but im writing it out here to show the process
     let n = ((26501365 - (env.dim.0 / 2)) / env.dim.0) as usize;
     assert_eq!(n, 202300);
 
-    let even = n*n;
-    let odd = (n+1) * (n+1);
+    let even = n * n;
+    let odd = (n + 1) * (n + 1);
 
-    let p2 = odd * visited.values().filter(|v| **v % 2 == 1).count() + even * visited.values().filter(|v| **v % 2 == 0).count()
-        - ((n + 1) * odd_corners) + (n * even_corners);
+    let p2 = odd * visited.values().filter(|v| **v % 2 == 1).count()
+        + even * visited.values().filter(|v| **v % 2 == 0).count()
+        - ((n + 1) * odd_corners)
+        + (n * even_corners);
 
     ctx.submit_part2(p2);
 }
