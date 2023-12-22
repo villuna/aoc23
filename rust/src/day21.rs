@@ -13,7 +13,7 @@ struct Env<'a> {
 }
 
 impl Env<'_> {
-    fn is_rock(&self, &Coord(x, y): &Coord) -> bool {
+    fn is_rock(&self, Coord(x, y): Coord) -> bool {
         self.map[y as usize * 132 + x as usize] == b'#'
     }
 }
@@ -43,7 +43,7 @@ fn solve(env: &Env, ctx: &mut AOContext) {
             let next = coord + Coord(inc.0, inc.1);
 
             if next.0 >= 0 && next.0 < env.dim.0 && next.1 >= 0 && next.1 < env.dim.1 {
-                if !visited.contains_key(&next) && !env.is_rock(&next) {
+                if !visited.contains_key(&next) && !env.is_rock(next) {
                     frontier.push_back((dist + 1, next));
                 }
             }
