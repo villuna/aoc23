@@ -20,7 +20,7 @@ macro_rules! days_decl {
     }
 }
 
-days_decl!(DAYS: 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22);
+days_decl!(DAYS: 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23);
 
 #[derive(Parser)]
 struct Args {
@@ -90,17 +90,17 @@ fn main() {
     let args = Args::parse();
     let day = args.day;
 
-    let Ok(input) = std::fs::read_to_string(format!("../input/day{day}.txt")) else {
-        eprintln!("input file not found! please create it at [REPO ROOT]/input/day{day}.txt");
-        return;
-    };
-
     match DAYS.get(&day) {
         None => {
-            eprintln!("Day not finished!");
+            eprintln!("Day invalid or not completed!");
         }
 
         Some(function) => {
+            let Ok(input) = std::fs::read_to_string(format!("../input/day{day}.txt")) else {
+                eprintln!("input file not found! please create it at [REPO ROOT]/input/day{day}.txt");
+                return;
+            };
+
             let mut ctx = AOContext::new(args.time);
             function(input, &mut ctx);
         }

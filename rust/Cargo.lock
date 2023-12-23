@@ -227,6 +227,7 @@ dependencies = [
 name = "aoc23rs"
 version = "0.1.0"
 dependencies = [
+ "bit-set",
  "clap",
  "derivative",
  "itertools",

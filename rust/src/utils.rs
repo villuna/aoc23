@@ -21,6 +21,15 @@ impl std::ops::Add for Coord {
     }
 }
 
+impl std::ops::Add<Dir> for Coord {
+    type Output = Self;
+
+    fn add(self, rhs: Dir) -> Self::Output {
+        let rhs = rhs.increment();
+        Coord(self.0 + rhs.0, self.1 + rhs.1)
+    }
+}
+
 impl std::ops::Mul<isize> for Coord {
     type Output = Self;
 
@@ -55,6 +64,15 @@ impl Dir {
             'L' => Dir::Left,
             'R' => Dir::Right,
             _ => panic!(),
+        }
+    }
+
+    pub fn opposite(&self) -> Dir {
+        match self {
+            Dir::Up => Dir::Down,
+            Dir::Down => Dir::Up,
+            Dir::Left => Dir::Right,
+            Dir::Right => Dir::Left,
         }
     }
 }
