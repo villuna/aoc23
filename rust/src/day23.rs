@@ -1,10 +1,10 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use itertools::Itertools;
 
 use crate::utils::{Coord, Dir};
 use crate::AOContext;
-use bit_set::BitSet;
+use bitvec::prelude::*;
 
 use rayon::prelude::*;
 
@@ -50,22 +50,22 @@ fn coord_index(env: &Env, coord: Coord) -> usize {
     (coord.1 * env.dim.0 + coord.0) as usize
 }
 
-fn part1_helper(env: &Env, current_length: usize, start: Coord, visited: &mut BitSet) -> usize {
+fn part1_helper(env: &Env, current_length: usize, start: Coord, visited: &mut BitSlice) -> usize {
     if start == env.goal {
         return current_length;
     }
 
-    visited.insert(coord_index(env, start));
+    visited.set(coord_index(env, start), true);
 
     let next_targets = [Dir::Up, Dir::Down, Dir::Left, Dir::Right]
         .into_iter()
         .filter_map(|d| {
             let coord = start + d;
-            if visited.contains(coord_index(env, coord)) {
+            let c = env.tile_at(coord)?;
+
+            if visited[coord_index(env, coord)] {
                 None
             } else {
-                let c = env.tile_at(coord)?;
-
                 if c == b'#' {
                     None
                 } else if b"><^v".contains(&c) {
@@ -96,7 +96,7 @@ fn part1_helper(env: &Env, current_length: usize, start: Coord, visited: &mut Bi
 }
 
 fn part1(env: &Env) -> usize {
-    let mut visited = BitSet::with_capacity((env.dim.0 * env.dim.1) as usize);
+    let mut visited = bitvec![0; (env.dim.0 * env.dim.1) as usize];
     part1_helper(env, 0, env.start, &mut visited)
 }
 
@@ -123,9 +123,9 @@ fn part2(env: &Env) -> usize {
         }
     }
 
-    let mut graph = HashMap::<Coord, Vec<(Coord, usize)>>::new();
+    let mut graph: Vec<Vec<(usize, usize)>> = Vec::new();
 
-    for &n in &multi_connected_nodes {
+    for (i, &n) in multi_connected_nodes.iter().enumerate() {
         let mut connections = Vec::new();
         let open_dirs = [Dir::Up, Dir::Down, Dir::Left, Dir::Right]
             .into_iter()
@@ -135,9 +135,9 @@ fn part2(env: &Env) -> usize {
             let mut current = n + d;
             let mut dist = 1;
 
-            loop {
-                if multi_connected_nodes.contains(&current) {
-                    break;
+            let connection_index = loop {
+                if let Some(index) = multi_connected_nodes.iter().position(|c| *c == current) {
+                    break index;
                 }
 
                 let open_dirs = [Dir::Up, Dir::Down, Dir::Left, Dir::Right]
@@ -153,41 +153,39 @@ fn part2(env: &Env) -> usize {
                 d = open_dirs[0];
                 current = current + d;
                 dist += 1;
-            }
+            };
 
-            connections.push((current, dist));
+            connections.push((connection_index, dist));
         }
 
-        graph.insert(n, connections);
+        graph.insert(i, connections);
     }
 
-    let mut visited = HashSet::new();
-    p2_helper(&graph, env.start, env.goal, 0, &mut visited)
+    p2_helper(&graph, 0, 1, 0u64)
 }
 
 fn p2_helper(
-    graph: &HashMap<Coord, Vec<(Coord, usize)>>,
-    start: Coord,
-    goal: Coord,
-    dist: usize,
-    visited: &mut HashSet<Coord>,
+    graph: &[Vec<(usize, usize)>],
+    start: usize,
+    goal: usize,
+    mut visited: u64,
 ) -> usize {
     if start == goal {
-        return dist;
+        return 0;
     }
 
-    visited.insert(start);
+    visited |= 1 << start;
 
-    if let Some(d) = graph.get(&start).unwrap().iter().find_map(|(n, d)| (*n == goal).then_some(*d)) {
-        return dist + d;
+    if let Some(d) = graph[start].iter().find_map(|(n, d)| (*n == goal).then_some(*d)) {
+        return d;
     }
 
-    graph.get(&start).unwrap().par_iter().filter_map(|&(node, d)| {
-        if visited.contains(&node) {
+    graph[start].iter().filter_map(|&(node, d)| {
+        if (visited & 1 << node) != 0 {
             return None;
         }
-        let mut visited = visited.clone();
-        Some(p2_helper(graph, node, goal, dist + d, &mut visited))
+
+        Some(d + p2_helper(graph, node, goal, visited))
     }).max().unwrap_or(0)
 }
 

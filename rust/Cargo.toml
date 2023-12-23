@@ -12,6 +12,7 @@ members = [
 
 [dependencies]
 bit-set = "0.5.3"
+bitvec = "1.0.1"
 clap = { version = "4.4.11", features = ["derive"] }
 derivative = "2.2.0"
 itertools = "0.12.0"
