@@ -4,15 +4,15 @@ use std::str::FromStr;
 use nom::{
     bytes::complete::tag,
     character::complete::{digit1, one_of, space0},
-    combinator::map_res,
+    combinator::{map_res, recognize, opt},
     error::ParseError,
     multi::{many1, separated_list1},
-    sequence::delimited,
+    sequence::{delimited, pair},
     AsChar, IResult, InputTakeAtPosition, Parser,
 };
 
 pub fn int<T: FromStr>(input: &str) -> IResult<&str, T> {
-    map_res(digit1, |s: &str| s.parse::<T>())(input)
+    map_res(recognize(pair(opt(tag("-")), digit1)), |s: &str| s.parse::<T>())(input)
 }
 
 pub fn newline(input: &str) -> IResult<&str, ()> {
