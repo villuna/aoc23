@@ -60,15 +60,7 @@ fn triple(input: &str) -> IResult<&str, [f64; 4]> {
         .parse(input)
 }
 
-async fn day24_async(input: &str, ctx: &mut AOContext) {
-    let stones = separated_list1(
-        newline,
-        separated_pair(triple, tag(" @ "), triple).map(|(pos, vel)| Vertex { pos, vel }),
-    )(input)
-    .unwrap()
-    .1;
-    ctx.parsing_done();
-
+async fn part1(stones: &[Vertex], ctx: &mut AOContext) {
     let (device, queue) = setup_wgpu().await;
 
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
@@ -230,10 +222,19 @@ async fn day24_async(input: &str, ctx: &mut AOContext) {
         let data: &[u32] = bytemuck::cast_slice(data_raw);
         ctx.submit_part1(data.iter().sum::<u32>());
     }
-
-    ctx.submit_part2(0);
 }
 
 pub fn day24(input: String, ctx: &mut AOContext) {
-    pollster::block_on(day24_async(&input, ctx));
+    let stones = separated_list1(
+        newline,
+        separated_pair(triple, tag(" @ "), triple).map(|(pos, vel)| Vertex { pos, vel }),
+    )(&input)
+    .unwrap()
+    .1;
+    ctx.parsing_done();
+
+    pollster::block_on(part1(&stones, ctx));
+    // Part 2 in mathematica
+    // im sorry, i failed
+    ctx.submit_part2("Sorry, I didn't do this one in rust");
 }
